@@ -1,5 +1,7 @@
 package cli
 
+import "fmt"
+
 type Option struct {
 	ShortName   string
 	LongName    string
@@ -7,14 +9,14 @@ type Option struct {
 	Description string
 }
 
-type OptionSlice []Option
+func (opt *Option) String() string {
+	return fmt.Sprintf("Opt: -%-2s --%-10s, %-s %-s", opt.ShortName, opt.LongName, opt.Description, opt.Value)
+}
 
-func (slice OptionSlice) toColumnArray() (colArr [][]string) {
-	if slice != nil {
-		for _, opt := range slice {
-			colArr = append(colArr, []string{opt.ShortName, opt.LongName, opt.Description, opt.Value})
-		}
+func OptArrayToStringArray(optArr []Option) (strArr []string) {
+	for _, opt := range optArr {
+		strArr = append(strArr, opt.String())
 	}
 
-	return
+	return strArr
 }

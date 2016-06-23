@@ -116,11 +116,11 @@ var SingleArg []Argument = []Argument{{
 var MultiFlag []Flag = []Flag{
 	{
 		LongName:    "LongA",
-		Description: "Description for Flag1",
+		Description: "Description for FlagA",
 	},
 	{
 		ShortName:   "b",
-		Description: "Description for Flag2",
+		Description: "Description for FlagB",
 	},
 
 	{
@@ -130,43 +130,43 @@ var MultiFlag []Flag = []Flag{
 	{
 		LongName:    "LongD",
 		ShortName:   "d",
-		Description: "Description for Flag",
+		Description: "Description for FlagD",
 	},
 }
 
 var SingleFlag []Flag = []Flag{{
 	LongName:    "LongE",
 	ShortName:   "e",
-	Description: "Description for Flag LongB",
+	Description: "Description for Flag LongE",
 }}
 
 var MultiOpt []Option = []Option{
 	{
 		LongName:    "LongF",
 		ShortName:   "f",
-		Description: "Description for Opt LongC",
+		Description: "Description for Opt LongF",
 	},
 	{
 		LongName:    "LongG",
 		ShortName:   "g",
-		Description: "Description for Opt LongD",
+		Description: "Description for Opt LongG",
 	},
 
 	{
 		LongName:    "LongI",
 		ShortName:   "i",
-		Description: "Description for Opt LongE",
+		Description: "Description for Opt LongI",
 	},
 }
 
 var SingleOpt []Option = []Option{{
 	LongName:    "LongJ",
 	ShortName:   "j",
-	Description: "Description for Option LongF",
+	Description: "Description for Option LongJ",
 }}
 
 func ActionPrintCommand(c Command) (err error) {
-	fmt.Println(c.ToString())
+	fmt.Println(c.String())
 	return
 }
 

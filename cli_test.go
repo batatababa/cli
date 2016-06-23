@@ -6,7 +6,7 @@ import (
 )
 
 func TestPrintCommand(t *testing.T) {
-	// fmt.Println(comTree.Root.ToString())
+	// comTree.Root.Print()
 }
 
 func TestPrintTree(t *testing.T) {
@@ -31,13 +31,13 @@ func findHelper(t *testing.T, appArgs string, targetCom *Command) {
 	argArray := strings.Split(appArgs, " ")
 	foundCom, _ := comTree.FindCommand(argArray)
 
-	if foundCom.ToString() != targetCom.ToString() {
+	if foundCom.String() != targetCom.String() {
 		t.Errorf("FindCommand:Looking for \"%s\" but found \"%s\"", appArgs, foundCom.Name)
 	}
 }
 
 func TestParsingArguments(t *testing.T) {
-	var parsed1 Command = Command{
+	var expected1 Command = Command{
 		Name:        "brown",
 		Description: "the quick brown",
 		Usage:       "use a brown?",
@@ -45,9 +45,9 @@ func TestParsingArguments(t *testing.T) {
 			Value: "fox",
 		}},
 	}
-	parseHelper(t, "the quick brown fox", *QuickBrown, parsed1)
+	parseHelper(t, "the quick brown fox", *QuickBrown, expected1)
 
-	var parsed2 Command = Command{
+	var expected2 Command = Command{
 		Name:        "brown",
 		Description: "the quick brown",
 		Usage:       "use a brown?",
@@ -60,11 +60,11 @@ func TestParsingArguments(t *testing.T) {
 			},
 		},
 	}
-	parseHelper(t, "the quick brown fox dog", *QuickBrown, parsed2)
+	parseHelper(t, "the quick brown fox dog", *QuickBrown, expected2)
 }
 
 func TestParsingFlags(t *testing.T) {
-	var parsed1 Command = Command{
+	var expected1 Command = Command{
 		Name:        "brown",
 		Description: "the quick brown",
 		Usage:       "use a brown?",
@@ -72,9 +72,9 @@ func TestParsingFlags(t *testing.T) {
 			ShortName: "b",
 		}},
 	}
-	parseHelper(t, "the quick brown -b", *QuickBrown, parsed1)
+	parseHelper(t, "the quick brown -b", *QuickBrown, expected1)
 
-	var parsed2 Command = Command{
+	var expected2 Command = Command{
 		Name:        "brown",
 		Description: "the quick brown",
 		Usage:       "use a brown?",
@@ -87,11 +87,11 @@ func TestParsingFlags(t *testing.T) {
 			},
 		},
 	}
-	parseHelper(t, "the quick brown --LongD -c", *QuickBrown, parsed2)
+	parseHelper(t, "the quick brown --LongD -c", *QuickBrown, expected2)
 }
 
 func TestParsingOptions(t *testing.T) {
-	var parsed1 Command = Command{
+	var expected1 Command = Command{
 		Name:        "brown",
 		Description: "the quick brown",
 		Usage:       "use a brown?",
@@ -100,20 +100,20 @@ func TestParsingOptions(t *testing.T) {
 			Value:    "val",
 		}},
 	}
-	parseHelper(t, "the quick brown --LongF val", *QuickBrown, parsed1)
+	parseHelper(t, "the quick brown --LongF val", *QuickBrown, expected1)
 
-	var parsed2 Command = Command{
+	var expected2 Command = Command{
 		Name:        "brown",
 		Description: "the quick brown",
 		Usage:       "use a brown?",
 		Opts: []Option{{
-			ShortName: "LongF",
+			ShortName: "f",
 			Value:     "val",
 		}},
 	}
-	parseHelper(t, "the quick brown --LongF val", *QuickBrown, parsed2)
+	parseHelper(t, "the quick brown -f val", *QuickBrown, expected2)
 
-	var parsed3 Command = Command{
+	var expected3 Command = Command{
 		Name:        "brown",
 		Description: "the quick brown",
 		Usage:       "use a brown?",
@@ -128,11 +128,11 @@ func TestParsingOptions(t *testing.T) {
 			},
 		},
 	}
-	parseHelper(t, "the quick brown -g val --LongF val2", *QuickBrown, parsed3)
+	parseHelper(t, "the quick brown -g val --LongF val2", *QuickBrown, expected3)
 }
 
 func TestParsingAll(t *testing.T) {
-	var parsed1 Command = Command{
+	var expected1 Command = Command{
 		Name:        "brown",
 		Description: "the quick brown",
 		Usage:       "use a brown?",
@@ -158,7 +158,7 @@ func TestParsingAll(t *testing.T) {
 			},
 		},
 	}
-	parseHelper(t, "the quick brown fox -g val --LongF val2 --LongD -c", *QuickBrown, parsed1)
+	parseHelper(t, "the quick brown fox -g val --LongF val2 --LongD -c", *QuickBrown, expected1)
 }
 
 func TestRunActions(t *testing.T) {
@@ -210,7 +210,7 @@ func TestAutoHelp(t *testing.T) {
 
 func TestFlagDuplication(t *testing.T) {
 
-	var parsed1 Command = Command{
+	var expected1 Command = Command{
 		Name:        "brown",
 		Description: "the quick brown",
 		Usage:       "use a brown?",
@@ -218,12 +218,12 @@ func TestFlagDuplication(t *testing.T) {
 			ShortName: "b",
 		}},
 	}
-	parseHelper(t, "the quick brown -bb", *QuickBrown, parsed1)
-	parseHelper(t, "the quick brown -bbb -bbb", *QuickBrown, parsed1)
+	parseHelper(t, "the quick brown -bb", *QuickBrown, expected1)
+	parseHelper(t, "the quick brown -bbb -bbb", *QuickBrown, expected1)
 }
 
 func TestOptionDuplication(t *testing.T) {
-	var parsed1 Command = Command{
+	var expected1 Command = Command{
 		Name:        "brown",
 		Description: "the quick brown",
 		Usage:       "use a brown?",
@@ -232,11 +232,12 @@ func TestOptionDuplication(t *testing.T) {
 			Value:     "val",
 		}},
 	}
-	parseHelper(t, "the quick brown -f val -f val", *QuickBrown, parsed1)
+	parseHelper(t, "the quick brown -f val -f val", *QuickBrown, expected1)
 }
 
 func TestOptionShortForm(t *testing.T) {
-	var parsed1 Command = Command{
+
+	var expected1 Command = Command{
 		Name:        "brown",
 		Description: "the quick brown",
 		Usage:       "use a brown?",
@@ -245,9 +246,9 @@ func TestOptionShortForm(t *testing.T) {
 			Value:     "val",
 		}},
 	}
-	parseHelper(t, "the quick brown -f=val", *QuickBrown, parsed1)
+	parseHelper(t, "the quick brown -f=val", *QuickBrown, expected1)
 
-	var parsed2 Command = Command{
+	var expected2 Command = Command{
 		Name:        "brown",
 		Description: "the quick brown",
 		Usage:       "use a brown?",
@@ -256,16 +257,29 @@ func TestOptionShortForm(t *testing.T) {
 			Value:     "val",
 		}},
 	}
-	parseHelper(t, "the quick brown --LongF=val  ", *QuickBrown, parsed2)
+	parseHelperNeg(t, "the quick brown -TooLong=val  ", *QuickBrown, expected2)
 
 }
 
-func parseHelper(t *testing.T, appArgs string, fullCom Command, parsedCom Command) {
+func parseHelper(t *testing.T, appArgs string, fullCom Command, expectedCom Command) {
 	argArray := strings.Split(appArgs, " ")
-	userCom, _ := ParseArgs(argArray, fullCom)
+	userCom, err := ParseArgs(argArray, fullCom)
 
-	if userCom.ToString() != parsedCom.ToString() {
-		t.Errorf("Bad Parsing \n %s  \nNOT EQUAL TO \n %s", userCom.ToString(), parsedCom.ToString())
+	if err != nil {
+		t.Errorf(err.Error())
+	}
+
+	if userCom.String() != expectedCom.String() {
+		t.Errorf("\n  Parsed Com For: \"%s\" \n%s  \n  NOT EQUAL Expected Com: \n%s", appArgs, userCom.String(), expectedCom.String())
+	}
+}
+
+func parseHelperNeg(t *testing.T, appArgs string, fullCom Command, expectedCom Command) {
+	argArray := strings.Split(appArgs, " ")
+	_, err := ParseArgs(argArray, fullCom)
+
+	if err == nil {
+		t.Errorf("")
 	}
 }
 

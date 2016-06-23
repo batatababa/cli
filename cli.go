@@ -7,9 +7,9 @@ import (
 )
 
 type SharedParameters struct {
-	Flags      FlagSlice
-	Args       ArgumentSlice
-	Opts       OptionSlice
+	Flags      []Flag
+	Args       []Argument
+	Opts       []Option
 	PreAction  func(com Command) error
 	PostAction func(com Command) error
 }
@@ -226,7 +226,7 @@ func ParseArgs(appArgs []string, c Command) (userCom Command, err error) {
 							userCom.Flags = append(userCom.Flags, f)
 						}
 					} else {
-						errStr := fmt.Sprintf("cli: Short form input -%s not found", argStr)
+						errStr := fmt.Sprintf("cli: Short form input -%s is too Long", argStr)
 						return userCom, errors.New(errStr)
 					}
 				}
@@ -237,6 +237,7 @@ func ParseArgs(appArgs []string, c Command) (userCom Command, err error) {
 						userCom.Flags = append(userCom.Flags, f)
 					}
 				} else if c.hasOption(argStr) {
+
 					if !userCom.hasOption(argStr) {
 						if i+1 >= predLen {
 							errStr := fmt.Sprintf("cli: No value provided for option -%s", argStr)
