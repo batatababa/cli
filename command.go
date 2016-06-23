@@ -11,6 +11,7 @@ type Command struct {
 	Usage       string
 	Flags       []Flag
 	Args        []Argument
+	ArgSets     []ArgumentSet
 	Opts        []Option
 	SubCommands []Command
 	HideHelp    bool
@@ -41,6 +42,7 @@ func (c Command) String() string {
 		fmt.Sprintf("Usage: %s", c.Usage),
 		strings.Join(SubComArrayToStringArray(c.SubCommands), sep),
 		strings.Join(ArgArrayToStringArray(c.Args), sep),
+		strings.Join(ArgSetArrayToStringArray(c.ArgSets), sep),
 		strings.Join(FlagArrayToStringArray(c.Flags), sep),
 		strings.Join(OptArrayToStringArray(c.Opts), sep),
 	}

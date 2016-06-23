@@ -6,7 +6,7 @@ import (
 )
 
 func TestPrintCommand(t *testing.T) {
-	// comTree.Root.Print()
+	comTree.Root.Print()
 }
 
 func TestPrintTree(t *testing.T) {
@@ -259,6 +259,50 @@ func TestOptionShortForm(t *testing.T) {
 	}
 	parseHelperNeg(t, "the quick brown -TooLong=val  ", *QuickBrown, expected2)
 
+}
+
+func TestTooManyArgs(t *testing.T) {
+	var testCom1 Command = Command{
+		Name:        "brown",
+		Description: "the quick brown",
+		Usage:       "use a brown?",
+		Args:        ThreeArg,
+		ArgSets:     []ArgumentSet{TwoArgSet},
+	}
+	assertParseFails(t, "the quick brown one", testCom1)
+	assertParsePasses(t, "the quick brown one two", testCom1)
+	assertParsePasses(t, "the quick brown one two three", testCom1)
+	assertParseFails(t, "the quick brown one two three four", testCom1)
+
+	var testCom2 Command = Command{
+		Name:        "brown",
+		Description: "the quick brown",
+		Usage:       "use a brown?",
+		Args:        TwoArg,
+		ArgSets:     []ArgumentSet{ThreeArgSet},
+	}
+	assertParseFails(t, "the quick brown one", testCom2)
+	assertParsePasses(t, "the quick brown one two", testCom2)
+	assertParsePasses(t, "the quick brown one two three", testCom2)
+	assertParseFails(t, "the quick brown one two three four", testCom2)
+}
+
+func assertParsePasses(t *testing.T, appArgs string, fullCom Command) {
+	argArray := strings.Split(appArgs, " ")
+	_, err := ParseArgs(argArray, fullCom)
+
+	if err != nil {
+		t.Errorf(err.Error())
+	}
+}
+
+func assertParseFails(t *testing.T, appArgs string, fullCom Command) {
+	argArray := strings.Split(appArgs, " ")
+	_, err := ParseArgs(argArray, fullCom)
+
+	if err == nil {
+		t.Errorf("ParseArgs Passed when it should have failed")
+	}
 }
 
 func parseHelper(t *testing.T, appArgs string, fullCom Command, expectedCom Command) {

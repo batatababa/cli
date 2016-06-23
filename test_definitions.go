@@ -10,9 +10,9 @@ var Quick *Command = &Command{
 	Name:        "quick",
 	Description: "the quick",
 	Usage:       "use a quick?",
-	Flags:       MultiFlag,
-	Args:        MultiArg,
-	Opts:        MultiOpt,
+	Flags:       ThreeFlag,
+	Args:        ThreeArg,
+	Opts:        ThreeOpt,
 	HideHelp:    false,
 	Action:      ActionPrintCommand,
 	SubCommands: []Command{*QuickBrown, *QuickRed},
@@ -21,9 +21,9 @@ var QuickRed *Command = &Command{
 	Name:        "red",
 	Description: "the quick red",
 	Usage:       "use a red?",
-	Flags:       MultiFlag,
-	Args:        MultiArg,
-	Opts:        MultiOpt,
+	Flags:       ThreeFlag,
+	Args:        ThreeArg,
+	Opts:        ThreeOpt,
 	HideHelp:    false,
 	Action:      ActionPrintCommand,
 }
@@ -32,9 +32,9 @@ var QuickBrown *Command = &Command{
 	Name:        "brown",
 	Description: "the quick brown",
 	Usage:       "use a brown?",
-	Flags:       MultiFlag,
-	Args:        MultiArg,
-	Opts:        MultiOpt,
+	Flags:       ThreeFlag,
+	Args:        ThreeArg,
+	Opts:        ThreeOpt,
 	HideHelp:    false,
 	Action:      ActionPrintCommand,
 	SubCommands: []Command{*QuickBrownFox, *QuickBrownBear, *QuickBrownCow},
@@ -44,9 +44,9 @@ var QuickBrownFox *Command = &Command{
 	Name:        "fox",
 	Description: "the quick brown fox",
 	Usage:       "use a fox?",
-	Flags:       MultiFlag,
-	Args:        MultiArg,
-	Opts:        MultiOpt,
+	Flags:       ThreeFlag,
+	Args:        ThreeArg,
+	Opts:        ThreeOpt,
 	HideHelp:    false,
 	Action:      ActionTester,
 }
@@ -54,9 +54,9 @@ var QuickBrownBear *Command = &Command{
 	Name:        "bear",
 	Description: "the quick brown bear",
 	Usage:       "use a bear?",
-	Flags:       MultiFlag,
-	Args:        MultiArg,
-	Opts:        MultiOpt,
+	Flags:       ThreeFlag,
+	Args:        ThreeArg,
+	Opts:        ThreeOpt,
 	HideHelp:    true,
 	Action:      ActionPrintCommand,
 }
@@ -65,9 +65,9 @@ var QuickBrownCow *Command = &Command{
 	Name:        "cow",
 	Description: "the quick brown cow",
 	Usage:       "use a cow?",
-	Flags:       MultiFlag,
-	Args:        MultiArg,
-	Opts:        MultiOpt,
+	Flags:       ThreeFlag,
+	Args:        ThreeArg,
+	Opts:        ThreeOpt,
 	HideHelp:    true,
 	Action:      ActionPrintCommand,
 }
@@ -81,9 +81,10 @@ var comTree CommandTree = CommandTree{
 		Name:        "the",
 		Description: "The What?",
 		Usage:       "How should I be doing this?",
-		Args:        MultiArg,
-		Flags:       MultiFlag,
-		Opts:        MultiOpt,
+		Args:        ThreeArg,
+		ArgSets:     SingleArgSet,
+		Flags:       ThreeFlag,
+		Opts:        ThreeOpt,
 		SubCommands: []Command{*Quick},
 	},
 	Shared: SharedParameters{
@@ -91,8 +92,40 @@ var comTree CommandTree = CommandTree{
 		PostAction: PostActionTester,
 	},
 }
+var SingleArgSet = []ArgumentSet{
+	TwoArgSet,
+}
+var TwoArgSet = ArgumentSet{
+	Set: []Argument{
+		{
+			Name:        "Arg1",
+			Description: "Description for Arg1",
+		},
+		{
+			Name:        "Arg2",
+			Description: "Description for Arg2",
+		},
+	},
+}
 
-var MultiArg []Argument = []Argument{
+var ThreeArgSet = ArgumentSet{
+	Set: []Argument{
+		{
+			Name:        "Arg1",
+			Description: "Description for Arg1",
+		},
+		{
+			Name:        "Arg2",
+			Description: "Description for Arg2",
+		},
+		{
+			Name:        "Arg3",
+			Description: "Description for Arg3",
+		},
+	},
+}
+
+var ThreeArg []Argument = []Argument{
 	{
 		Name:        "Arg1",
 		Description: "Description for Arg1",
@@ -103,8 +136,8 @@ var MultiArg []Argument = []Argument{
 	},
 
 	{
-		Name:        "Arg2",
-		Description: "Description for Arg2",
+		Name:        "Arg3",
+		Description: "Description for Arg3",
 	},
 }
 
@@ -113,7 +146,18 @@ var SingleArg []Argument = []Argument{{
 	Description: "Description for Arg",
 }}
 
-var MultiFlag []Flag = []Flag{
+var TwoArg []Argument = []Argument{
+	{
+		Name:        "Arg1",
+		Description: "Description for Arg1",
+	},
+	{
+		Name:        "Arg2",
+		Description: "Description for Arg2",
+	},
+}
+
+var ThreeFlag []Flag = []Flag{
 	{
 		LongName:    "LongA",
 		Description: "Description for FlagA",
@@ -140,7 +184,7 @@ var SingleFlag []Flag = []Flag{{
 	Description: "Description for Flag LongE",
 }}
 
-var MultiOpt []Option = []Option{
+var ThreeOpt []Option = []Option{
 	{
 		LongName:    "LongF",
 		ShortName:   "f",
@@ -198,16 +242,16 @@ func ResetActionTesters() {
 // 		Description: "description for a test app",
 // 		Name:        "the",
 // 		Usage:       "how to use the program",
-// 		Args:        MultiArg,
-// 		Flags:       MultiFlag,
-// 		Opts:        MultiOpt,
+// 		Args:        ThreeArg,
+// 		Flags:       ThreeFlag,
+// 		Opts:        ThreeOpt,
 // 		SubCommands: []Command{
 // 			{
 // 				Name:        "quick",
 // 				Description: "the quick",
-// 				Flags:       MultiFlag,
-// 				Args:        MultiArg,
-// 				Opts:        MultiOpt,
+// 				Flags:       ThreeFlag,
+// 				Args:        ThreeArg,
+// 				Opts:        ThreeOpt,
 // 				Action:      ActionPrintCommand,
 // 				SubCommands: []Command{
 // 					{

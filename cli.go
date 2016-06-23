@@ -9,6 +9,7 @@ import (
 type SharedParameters struct {
 	Flags      []Flag
 	Args       []Argument
+	ArgSets    []ArgumentSet
 	Opts       []Option
 	PreAction  func(com Command) error
 	PostAction func(com Command) error
@@ -56,6 +57,7 @@ func Run(appArgs []string, tree *CommandTree) (err error) {
 
 	fullCom.Flags = append(fullCom.Flags, tree.Shared.Flags...)
 	fullCom.Args = append(fullCom.Args, tree.Shared.Args...)
+	fullCom.ArgSets = append(fullCom.ArgSets, tree.Shared.ArgSets...)
 	fullCom.Opts = append(fullCom.Opts, tree.Shared.Opts...)
 
 	userCom, err := ParseArgs(appArgs, fullCom)

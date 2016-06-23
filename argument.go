@@ -1,6 +1,9 @@
 package cli
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 type Argument struct {
 	Name        string
@@ -16,6 +19,22 @@ func (arg *Argument) String() string {
 func ArgArrayToStringArray(argArr []Argument) (strArr []string) {
 	for _, arg := range argArr {
 		strArr = append(strArr, arg.String())
+	}
+
+	return strArr
+}
+
+type ArgumentSet struct {
+	Set []Argument
+}
+
+func (argSet *ArgumentSet) String() string {
+	return fmt.Sprintf("ArgSet: {%s}", strings.Join(ArgArrayToStringArray(argSet.Set), ",\n           "))
+}
+
+func ArgSetArrayToStringArray(argSetArr []ArgumentSet) (strArr []string) {
+	for _, argSet := range argSetArr {
+		strArr = append(strArr, argSet.String())
 	}
 
 	return strArr
