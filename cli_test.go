@@ -6,7 +6,7 @@ import (
 )
 
 func TestPrintCommand(t *testing.T) {
-	comTree.Root.Print()
+	// comTree.Root.Print()
 }
 
 func TestPrintTree(t *testing.T) {
@@ -261,7 +261,7 @@ func TestOptionShortForm(t *testing.T) {
 
 }
 
-func TestTooManyArgs(t *testing.T) {
+func TestArgSets(t *testing.T) {
 	var testCom1 Command = Command{
 		Name:        "brown",
 		Description: "the quick brown",
@@ -269,10 +269,8 @@ func TestTooManyArgs(t *testing.T) {
 		Args:        ThreeArg,
 		ArgSets:     []ArgumentSet{TwoArgSet},
 	}
-	assertParseFails(t, "the quick brown one", testCom1)
 	assertParsePasses(t, "the quick brown one two", testCom1)
 	assertParsePasses(t, "the quick brown one two three", testCom1)
-	assertParseFails(t, "the quick brown one two three four", testCom1)
 
 	var testCom2 Command = Command{
 		Name:        "brown",
@@ -281,10 +279,8 @@ func TestTooManyArgs(t *testing.T) {
 		Args:        TwoArg,
 		ArgSets:     []ArgumentSet{ThreeArgSet},
 	}
-	assertParseFails(t, "the quick brown one", testCom2)
 	assertParsePasses(t, "the quick brown one two", testCom2)
 	assertParsePasses(t, "the quick brown one two three", testCom2)
-	assertParseFails(t, "the quick brown one two three four", testCom2)
 }
 
 func assertParsePasses(t *testing.T, appArgs string, fullCom Command) {
