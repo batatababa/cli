@@ -69,9 +69,9 @@ func Run(appArgs []string, tree *CommandTree) (err error) {
 	if tree.AutoHelp && !userCom.HideHelp {
 		if userCom.hasFlag(autoHelpFlag.ShortName) || userCom.hasFlag(autoHelpFlag.LongName) || userCom.hasArg(autoHelpArg.Value) {
 			if tree.ToHelpString == nil {
-				ToHelpString(fullCom)
+				fmt.Println(ToHelpString(fullCom))
 			} else {
-				tree.ToHelpString(fullCom)
+				fmt.Println(tree.ToHelpString(fullCom))
 			}
 			return nil
 		}
