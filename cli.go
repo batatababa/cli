@@ -206,6 +206,7 @@ func ParseArgs(appArgs []string, c Command) (userCom Command, err error) {
 			return userCom, err
 		}
 	}
+
 	return userCom, nil // nil error
 }
 
@@ -288,7 +289,11 @@ func parseShortForm(predicate []string, pos int, c Command, userCom *Command) (n
 
 // For the case of mul
 func PrintTree(c *Command) {
-	fmt.Printf("%d: %s\n", 0, c.Name)
+	fmt.Printf("%d: %s", 0, c.Name)
+	for _, a := range c.Args {
+		fmt.Printf(" <%s>", a.Name)
+	}
+	fmt.Printf("\n")
 	printChildren(c, 0)
 }
 
@@ -301,7 +306,12 @@ func printChildren(c *Command, level int) {
 		for j := 0; j < level; j++ {
 			fmt.Printf("  ")
 		}
-		fmt.Printf("%d: %s\n", level, curSub.Name)
+		fmt.Printf("%d: %s", level, curSub.Name)
+		for _, a := range curSub.Args {
+			fmt.Printf(" <%s>", a.Name)
+		}
+
+		fmt.Printf("\n")
 		printChildren(curSub, level)
 	}
 }

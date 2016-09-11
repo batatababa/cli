@@ -8,53 +8,65 @@ import (
 )
 
 func ToHelpString(c Command) (help string) {
-	var helpBuf bytes.Buffer
+	var buf bytes.Buffer
 	config := columnize.DefaultConfig()
 	config.Prefix = "  "
 
-	helpBuf.WriteString(fmt.Sprintf("%s: %s\n", c.Name, c.Description))
-	helpBuf.WriteString(fmt.Sprintf("Usage: %s\n\n", c.Usage))
+	buf.WriteString(fmt.Sprintf("%s\n", c.Description))
+	buf.WriteString("Usage: \n")
+
+	uniqueArgs := make(map[*Argument]bool)
+	if c.Args != nil {
+		var args []string
+		for _, a := range c.Args {
+			args = append(args, fmt.Sprintf("<%s>", a.Name))
+			uniqueArgs[&a] = true
+		}
+		buf.WriteString(columnize.Format(args, config))
+	}
+
+	if c.ArgSets != nil {
+		var args []string
+		for _, argSet := range c.ArgSets {
+			var setString string
+			for _, a := range argSet.Set {
+				setString += fmt.Sprintf("<%s> ", a.Name)
+			}
+			args = append(args, setString)
+			buf.WriteString(columnize.Format(args, config))
+		}
+	}
 
 	if c.SubCommands != nil {
-		helpBuf.WriteString(" SubCommands:\n")
+		buf.WriteString(" SubCommands:\n")
 		var subs []string
 		for _, s := range c.SubCommands {
 			subs = append(subs, fmt.Sprintf("%s:|%s", s.Name, s.Description))
 		}
-		helpBuf.WriteString(columnize.Format(subs, config))
-		helpBuf.WriteString("\n\n")
-	}
-
-	if c.Args != nil {
-		helpBuf.WriteString(" Arguments:\n")
-		var args []string
-		for _, a := range c.Args {
-			args = append(args, fmt.Sprintf("<%s>|%s", a.Name, a.Description))
-		}
-		helpBuf.WriteString(columnize.Format(args, config))
-		helpBuf.WriteString("\n\n")
+		buf.WriteString(columnize.Format(subs, config))
+		buf.WriteString("\n\n")
 	}
 
 	if c.Flags != nil {
-		helpBuf.WriteString(" Flags:\n")
+		buf.WriteString(" Flags:\n")
 		var flags []string
 		for _, f := range c.Flags {
 			flags = append(flags, toShortLongDescString(f.ShortName, f.LongName, f.Description))
 		}
-		helpBuf.WriteString(columnize.Format(flags, config))
-		helpBuf.WriteString("\n\n")
+		buf.WriteString(columnize.Format(flags, config))
+		buf.WriteString("\n\n")
 	}
 
 	if c.Opts != nil {
-		helpBuf.WriteString(" Options:\n")
+		buf.WriteString(" Options:\n")
 		var opts []string
 		for _, o := range c.Opts {
 			opts = append(opts, toShortLongDescString(o.ShortName, o.LongName, o.Description))
 		}
-		helpBuf.WriteString(columnize.Format(opts, config))
-		helpBuf.WriteString("\n\n")
+		buf.WriteString(columnize.Format(opts, config))
+		buf.WriteString("\n\n")
 	}
-	help = helpBuf.String()
+	help = buf.String()
 	return
 }
 
