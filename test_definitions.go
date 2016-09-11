@@ -76,7 +76,7 @@ var comTree CommandTree = CommandTree{
 	Author:       "Jeff Williams",
 	Version:      "0.1",
 	AutoHelp:     true,
-	ToHelpString: ToHelpString,
+	ToHelpString: NoHelp,
 	Root: Command{
 		Name:        "the",
 		Description: "The What?",
@@ -233,6 +233,10 @@ func ResetActionTesters() {
 	PostActionOccured = false
 	ActionOccured = false
 	PreActionOccured = false
+}
+
+func NoHelp(c Command, pathToCom []string) (help string) {
+	return ""
 }
 
 // var commandTree CommandTree = CommandTree{

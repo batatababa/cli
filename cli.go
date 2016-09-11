@@ -23,7 +23,7 @@ type CommandTree struct {
 	Email        string
 	Version      string
 	AutoHelp     bool
-	ToHelpString func(c Command) string
+	ToHelpString func(c Command, pathToCom []string) string
 }
 
 func NewCommandTree() (tree CommandTree) {
@@ -49,7 +49,7 @@ func Run(appArgs []string, tree *CommandTree) (err error) {
 		tree.Shared.Flags = append(tree.Shared.Flags, autoHelpFlag)
 	}
 
-	fullCom, err := tree.FindCommand(appArgs)
+	fullCom, pathToCom, err := tree.FindCommand(appArgs)
 
 	if err != nil {
 		return err
@@ -68,10 +68,15 @@ func Run(appArgs []string, tree *CommandTree) (err error) {
 
 	if tree.AutoHelp && !userCom.HideHelp {
 		if userCom.hasFlag(autoHelpFlag.ShortName) || userCom.hasFlag(autoHelpFlag.LongName) || userCom.hasArg(autoHelpArg.Value) {
+			helpStr := ""
 			if tree.ToHelpString == nil {
-				fmt.Println(ToHelpString(fullCom))
+				helpStr = ToHelpString(fullCom, pathToCom)
 			} else {
-				fmt.Println(tree.ToHelpString(fullCom))
+				helpStr = tree.ToHelpString(fullCom, pathToCom)
+			}
+
+			if helpStr != "" {
+				fmt.Println(helpStr)
 			}
 			return nil
 		}
@@ -101,11 +106,12 @@ func Run(appArgs []string, tree *CommandTree) (err error) {
 * predicate refers to the second half of the command, the piece containing the flags,
 * options, and arguments of the command string.
  */
-func (tree CommandTree) FindCommand(appArgs []string) (fullCom Command, err error) {
+func (tree CommandTree) FindCommand(appArgs []string) (fullCom Command, pathToCom []string, err error) {
 	numArgs := len(appArgs)
 
 	if numArgs == 0 {
-		return fullCom, errors.New("cli: No arguments provided")
+		err = errors.New("cli: No arguments provided")
+		return fullCom, pathToCom, err
 	}
 
 	curCommand := &tree.Root
@@ -113,8 +119,11 @@ func (tree CommandTree) FindCommand(appArgs []string) (fullCom Command, err erro
 
 	if curCommand.Name != curArg {
 		errStr := fmt.Sprintf("cli: Command %s not found", curCommand.Name)
-		return fullCom, errors.New(errStr)
+		err = errors.New(errStr)
+		return fullCom, pathToCom, err
 	}
+
+	pathToCom = append(pathToCom, curArg)
 
 	predBegin := 0
 
@@ -134,6 +143,7 @@ func (tree CommandTree) FindCommand(appArgs []string) (fullCom Command, err erro
 			if curArg == curSub.Name {
 				curCommand = curSub
 				argFound = true
+				pathToCom = append(pathToCom, curArg)
 				break
 			}
 		}
@@ -142,10 +152,13 @@ func (tree CommandTree) FindCommand(appArgs []string) (fullCom Command, err erro
 			break
 		}
 	}
+	if pathToCom != nil {
+		pathToCom = pathToCom[:len(pathToCom)-1]
+	}
 
 	fullCom = *curCommand
 
-	return
+	return fullCom, pathToCom, err
 }
 
 // Big ugly function that does the grunt work of the program. It could be split into functions, but as it is

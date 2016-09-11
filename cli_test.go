@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"fmt"
 	"strings"
 	"testing"
 )
@@ -14,7 +15,7 @@ func TestPrintTree(t *testing.T) {
 }
 
 func TestDefaultHelpTemplate(t *testing.T) {
-	ToHelpString(comTree.Root)
+	ToHelpString(comTree.Root, nil)
 }
 
 func TestFind(t *testing.T) {
@@ -29,11 +30,41 @@ func TestFind(t *testing.T) {
 
 func findHelper(t *testing.T, appArgs string, targetCom *Command) {
 	argArray := strings.Split(appArgs, " ")
-	foundCom, _ := comTree.FindCommand(argArray)
+	foundCom, pathToCom, _ := comTree.FindCommand(argArray)
 
 	if foundCom.String() != targetCom.String() {
 		t.Errorf("FindCommand:Looking for \"%s\" but found \"%s\"", appArgs, foundCom.Name)
 	}
+
+	if stringArrayCompare(argArray[:len(argArray)-1], pathToCom) != true {
+		errString := fmt.Sprintf("FindCommand:Path To Command is not correct\n")
+		errString += fmt.Sprintf("argArray: %v\n", argArray)
+		errString += fmt.Sprintf("pathToCom: %v\n", pathToCom)
+		t.Errorf(errString)
+	}
+}
+
+func stringArrayCompare(a []string, b []string) bool {
+
+	if a == nil && b == nil {
+		return true
+	}
+
+	if a == nil || b == nil {
+		return false
+	}
+
+	if len(a) != len(b) {
+		return false
+	}
+
+	for i := range a {
+		if a[i] != b[i] {
+			return false
+		}
+	}
+
+	return true
 }
 
 func TestParsingArguments(t *testing.T) {

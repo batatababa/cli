@@ -7,7 +7,7 @@ import (
 	"github.com/ryanuber/columnize"
 )
 
-func ToHelpString(c Command) (help string) {
+func ToHelpString(c Command, pathToCom []string) (help string) {
 	var helpBuf bytes.Buffer
 	config := columnize.DefaultConfig()
 	config.Prefix = "  "
