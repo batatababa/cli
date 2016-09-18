@@ -299,22 +299,81 @@ func parseShortForm(predicate []string, pos int, c Command, userCom *Command) (n
 	return newPos, err
 }
 
+type Node struct {
+	Command
+	level int
+}
+
 // For the case of mul
 func PrintTree(c *Command) {
-	fmt.Printf("%d: %s\n", 0, c.Name)
-	printChildren(c, 0)
-}
+	slice := CommandToNodeSlice(c)
 
-func printChildren(c *Command, level int) {
-	level++
-	subCount := len(c.SubCommands)
-	for j := 0; j < subCount; j++ {
-		curSub := &c.SubCommands[j] // pointer to a command
-
-		for j := 0; j < level; j++ {
+	for _, node := range slice {
+		for j := 0; j < node.level; j++ {
 			fmt.Printf("  ")
 		}
-		fmt.Printf("%d: %s\n", level, curSub.Name)
-		printChildren(curSub, level)
+		fmt.Printf("%d: %s\n", node.level, node.Name)
 	}
 }
+
+// For the case of mul
+func PrintTreeHelp(c *Command) {
+	slice := CommandToNodeSlice(c)
+
+	for _, node := range slice {
+		fmt.Printf("--------------------------------------------\n")
+		fmt.Printf("\"%s\"\n", ToHelpString(node.Command, nil))
+	}
+}
+
+func addChildrenToSlice(n *Node, slice *[]Node) {
+	subCount := len(n.SubCommands)
+	for i := 0; i < subCount; i++ {
+		child := Node{n.SubCommands[i], n.level + 1} // pointer to a command
+
+		*slice = append(*slice, child)
+		addChildrenToSlice(&child, slice)
+	}
+}
+
+func CommandToNodeSlice(c *Command) (slice []Node) {
+	slice = append(slice, Node{*c, 0})
+	addChildrenToSlice(&slice[0], &slice)
+
+	return slice
+}
+
+// type Iterable interface {
+// 	Next() (int, interface{})
+// 	Prev() (int, interface{})
+// 	First() (int, interface{})
+// }
+
+// func GetIterator(iable Iterable) Iterable {
+// 	slice := s.ToSlice()
+// 	index := -1
+// 	size := len(slice)
+
+// 	return Iterable{
+// 		Next: func() (int, interface{}) {
+// 			index++
+// 			if index == size {
+// 				return 0, nil
+// 			} else {
+// 				return index, slice[index]
+// 			}
+// 		},
+// 		Prev: func() (int, interface{}) {
+// 			if index <= 0 {
+// 				return 0, nil
+// 			} else {
+// 				index--
+// 				return index, slice[index]
+// 			}
+// 		},
+// 		First: func() (int, interface{}) {
+// 			index = 0
+// 			return index, slice[index]
+// 		},
+// 	}
+// }

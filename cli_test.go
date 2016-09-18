@@ -10,13 +10,29 @@ func TestPrintCommand(t *testing.T) {
 	// comTree.Root.Print()
 }
 
-func TestPrintTree(t *testing.T) {
-	// PrintTree(&comTree.Root)
-}
+// func TestPrintTree(t *testing.T) {
+// 	PrintTree(&comTree.Root)
+// }
+
+// func TestPrintTree(t *testing.T) {
+// 	PrintTreeHelp(&comTree.Root)
+// }
 
 func TestDefaultHelpTemplate(t *testing.T) {
 	ToHelpString(comTree.Root, nil)
 }
+
+// func TestCommandToSlice(t *testing.T) {
+// 	var iter Iterator
+// 	var iable Iterable = iter
+
+// 	// iter := GetIterator(comTree.Root)
+
+// 	// for i, val := iter.Next(); val != nil; i, val = iter.Next() {
+// 	// 	com := val.(Command)
+// 	// 	fmt.Printf("%d: %s \n", i, com.Name)
+// 	// }
+// }
 
 func TestFind(t *testing.T) {
 	findHelper(t, "the", &comTree.Root)
@@ -26,45 +42,6 @@ func TestFind(t *testing.T) {
 	findHelper(t, "the quick brown bear", QuickBrownBear)
 	findHelper(t, "the quick brown cow", QuickBrownCow)
 	findHelper(t, "the quick red", QuickRed)
-}
-
-func findHelper(t *testing.T, appArgs string, targetCom *Command) {
-	argArray := strings.Split(appArgs, " ")
-	foundCom, pathToCom, _ := comTree.FindCommand(argArray)
-
-	if foundCom.String() != targetCom.String() {
-		t.Errorf("FindCommand:Looking for \"%s\" but found \"%s\"", appArgs, foundCom.Name)
-	}
-
-	if stringArrayCompare(argArray[:len(argArray)-1], pathToCom) != true {
-		errString := fmt.Sprintf("FindCommand:Path To Command is not correct\n")
-		errString += fmt.Sprintf("argArray: %v\n", argArray)
-		errString += fmt.Sprintf("pathToCom: %v\n", pathToCom)
-		t.Errorf(errString)
-	}
-}
-
-func stringArrayCompare(a []string, b []string) bool {
-
-	if a == nil && b == nil {
-		return true
-	}
-
-	if a == nil || b == nil {
-		return false
-	}
-
-	if len(a) != len(b) {
-		return false
-	}
-
-	for i := range a {
-		if a[i] != b[i] {
-			return false
-		}
-	}
-
-	return true
 }
 
 func TestParsingArguments(t *testing.T) {
@@ -221,12 +198,6 @@ func TestSharedParameters(t *testing.T) {
 	Run(strings.Split("quick brown fox -x val -k", " "), &tempTree)
 }
 
-func assertActions(t *testing.T, assertion bool) {
-	if !(ActionOccured == PreActionOccured == PostActionOccured == assertion) {
-		t.Errorf("Actions were not run correctly")
-	}
-}
-
 func TestAutoHelp(t *testing.T) {
 	comTree.AutoHelp = true
 	ResetActionTesters()
@@ -332,6 +303,12 @@ func assertParseFails(t *testing.T, appArgs string, fullCom Command) {
 	}
 }
 
+func assertActions(t *testing.T, assertion bool) {
+	if !(ActionOccured == PreActionOccured == PostActionOccured == assertion) {
+		t.Errorf("Actions were not run correctly")
+	}
+}
+
 func parseHelper(t *testing.T, appArgs string, fullCom Command, expectedCom Command) {
 	argArray := strings.Split(appArgs, " ")
 	userCom, err := ParseArgs(argArray, fullCom)
@@ -352,6 +329,45 @@ func parseHelperNeg(t *testing.T, appArgs string, fullCom Command, expectedCom C
 	if err == nil {
 		t.Errorf("")
 	}
+}
+
+func findHelper(t *testing.T, appArgs string, targetCom *Command) {
+	argArray := strings.Split(appArgs, " ")
+	foundCom, pathToCom, _ := comTree.FindCommand(argArray)
+
+	if foundCom.String() != targetCom.String() {
+		t.Errorf("FindCommand:Looking for \"%s\" but found \"%s\"", appArgs, foundCom.Name)
+	}
+
+	if strSliceCmp(argArray[:len(argArray)-1], pathToCom) != true {
+		errString := fmt.Sprintf("FindCommand:Path To Command is not correct\n")
+		errString += fmt.Sprintf("argArray: %v\n", argArray)
+		errString += fmt.Sprintf("pathToCom: %v\n", pathToCom)
+		t.Errorf(errString)
+	}
+}
+
+func strSliceCmp(a []string, b []string) bool {
+
+	if a == nil && b == nil {
+		return true
+	}
+
+	if a == nil || b == nil {
+		return false
+	}
+
+	if len(a) != len(b) {
+		return false
+	}
+
+	for i := range a {
+		if a[i] != b[i] {
+			return false
+		}
+	}
+
+	return true
 }
 
 // func TestReadMeCodeExamples(t *testing.T) {
