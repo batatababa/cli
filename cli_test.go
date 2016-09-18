@@ -14,25 +14,13 @@ func TestPrintCommand(t *testing.T) {
 // 	PrintTree(&comTree.Root)
 // }
 
-// func TestPrintTree(t *testing.T) {
-// 	PrintTreeHelp(&comTree.Root)
-// }
+func TestPrintTree(t *testing.T) {
+	PrintTreeHelp(&comTree.Root)
+}
 
 func TestDefaultHelpTemplate(t *testing.T) {
 	ToHelpString(comTree.Root, nil)
 }
-
-// func TestCommandToSlice(t *testing.T) {
-// 	var iter Iterator
-// 	var iable Iterable = iter
-
-// 	// iter := GetIterator(comTree.Root)
-
-// 	// for i, val := iter.Next(); val != nil; i, val = iter.Next() {
-// 	// 	com := val.(Command)
-// 	// 	fmt.Printf("%d: %s \n", i, com.Name)
-// 	// }
-// }
 
 func TestFind(t *testing.T) {
 	findHelper(t, "the", &comTree.Root)
